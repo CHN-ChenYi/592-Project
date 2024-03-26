@@ -28,6 +28,7 @@ Our code is based in [this commit](https://github.com/huggingface/transformers/c
 ## 2 Data
 ### 2.1 Resources
 + The training/evaluation intruction-response data before processing can be downloaded from this [link](https://conversationhub.blob.core.windows.net/beit-share-public/MiniLLM/data.tar?sv=2021-10-04&st=2023-06-08T11%3A16%3A02Z&se=2033-06-09T11%3A16%3A00Z&sr=c&sp=r&sig=N4pfCVmSeq4L4tS8QbrFVsX6f6q844eft8xSuXdxU48%3D).
++ The yahoo data can be downloaded from this [link](https://s3.amazonaws.com/fast-ai-nlp/yahoo_answers_csv.tgz).
 + The plain-text corpus $\mathcal{D}_\text{PT}$ can be download from the HugginFace datasets [repository](https://huggingface.co/datasets/openwebtext). For reproducibility, we recommend you to use the following preprocessed data.
 + The processed data can be downloaded from this [link](https://conversationhub.blob.core.windows.net/beit-share-public/MiniLLM/processed_data.tar?sv=2021-10-04&st=2023-06-08T11%3A16%3A02Z&se=2033-06-09T11%3A16%3A00Z&sr=c&sp=r&sig=N4pfCVmSeq4L4tS8QbrFVsX6f6q844eft8xSuXdxU48%3D).
 
@@ -42,6 +43,7 @@ This script will replace the continuous `\n` in each document with a special tok
 Tokenize the data and store them in binary files:
 ```bash
 bash scripts/gpt2/tools/process_data_dolly.sh /PATH/TO/MiniLLM # Process Dolly Train / Validation Data
+bash scripts/gpt2/tools/process_data_yahoo.sh /PATH/TO/MiniLLM 1 # Process Yahoo Train / Validation Data
 bash scripts/gpt2/tools/process_data_pretrain.sh /PATH/TO/MiniLLM # Process OpenWebText Train / Validation Data
 
 bash scripts/opt/tools/process_data_dolly.sh /PATH/TO/MiniLLM # Process Dolly Train / Validation Data
