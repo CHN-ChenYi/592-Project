@@ -21,7 +21,7 @@ class Encoder(object):
         Encoder.tokenizer = AutoTokenizer.from_pretrained(self.args.model_path)
 
     def encode(self, line):
-        if "input" not in line or len(line["input"]) == 0:
+        if "question_content" not in line or len(line["question_content"]) == 0:
             if self.args.model_type!="qwen":
                 template = (
                     "Below is an title that describes a task. "
@@ -34,23 +34,23 @@ class Encoder(object):
                     "Write a response that appropriately completes the request.\n\n"
                     "### title:\n{title}\n\n### Response:\n<|im_end|><|im_start|>Assistant:"
                 )
-            prompt = template.format(title=line["title"])
+            prompt = template.format(title=line["question_title"])
         else:
             if self.args.model_type!="qwen":
                 template = (
                     "Below is an title that describes a task, paired with an input that provides further context. "
                     "Write a response that appropriately completes the request.\n\n"
-                    "### title:\n{title}\n\n### Input:\n{input}\n\n### Response:\n"
+                    "### title:\n{title}\n\n### Input:\n{content}\n\n### Response:\n"
                 )
             else:
                 template = (
                     "<|im_start|>Below is an title that describes a task, paired with an input that provides further context. "
                     "Write a response that appropriately completes the request.\n\n"
-                    "### title:\n{title}\n\n### Input:\n{input}\n\n### Response:\n<|im_end|><|im_start|>Assistant:"
+                    "### title:\n{title}\n\n### Input:\n{content}\n\n### Response:\n<|im_end|><|im_start|>Assistant:"
                 )
-            prompt = template.format(title=line["title"], input=line["input"])
+            prompt = template.format(title=line["question_title"], content=line["question_content"])
             
-        response = line["output"]
+        response = line["best_answer"]
 
         prompt_tokens = Encoder.tokenizer.encode(prompt, add_special_tokens=False)
         full_tokens = Encoder.tokenizer.encode(prompt + response, add_special_tokens=False) + [Encoder.tokenizer.eos_token_id]
@@ -71,10 +71,10 @@ def main():
     os.makedirs(args.processed_data_dir, exist_ok=True)
 
     with open(os.path.join(args.data_dir, 'train.csv'), 'r') as f:
-        reader = csv.DictReader(f, fieldnames=["class","title","input","output"])
+        reader = csv.DictReader(f, fieldnames=["topic","question_title","quention_content","best_answer"])
         train_data = list(reader)
     with open(os.path.join(args.data_dir, 'test.csv'), 'r') as f:
-        reader = csv.DictReader(f, fieldnames=["class","title","input","output"])
+        reader = csv.DictReader(f, fieldnames=["topic","question_title","question_content","best_answer"])
         test_data = list(reader)
     raw_data = test_data + train_data
 
