@@ -71,7 +71,7 @@ def main():
     os.makedirs(args.processed_data_dir, exist_ok=True)
 
     with open(os.path.join(args.data_dir, 'train.csv'), 'r') as f:
-        reader = csv.DictReader(f, fieldnames=["topic","question_title","quention_content","best_answer"])
+        reader = csv.DictReader(f, fieldnames=["topic","question_title","question_content","best_answer"])
         train_data = list(reader)
     with open(os.path.join(args.data_dir, 'test.csv'), 'r') as f:
         reader = csv.DictReader(f, fieldnames=["topic","question_title","question_content","best_answer"])
@@ -82,7 +82,8 @@ def main():
         classes = f.readlines()
     classes.insert(0, "None")
 
-    raw_data = [row for row in raw_data if row['class'] == str(args.class_index)]
+    if (args.class_index != 0):
+        raw_data = [row for row in raw_data if row['class'] == str(args.class_index)]
 
     if args.dev_num > 0:
         all_data = {
@@ -135,10 +136,10 @@ def main():
                 binary_builder.add_item(torch.IntTensor(prompt + [-1] + response))
 
             json_file.write(json.dumps({
-                "instruction": line["title"],
+                "instruction": line["question_title"],
                 "prompt": prompt_str,
-                "input": line["input"],
-                "output": line["output"],
+                "input": line["question_content"],
+                "output": line["best_answer"],
             }) + "\n")
 
             prompt_lens.append(len(prompt))

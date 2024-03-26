@@ -1,5 +1,5 @@
 BASE_PATH=${1}
-CLASS_INDEX=${2:-1}
+CLASS_INDEX=${2:-0}
 
 export TF_CPP_MIN_LOG_LEVEL=3
 
