@@ -1,5 +1,6 @@
 BASE_PATH=${1}
 CLASS_INDEX=${2:-0}
+TRAIN_SET_SIZE=${3:-0}
 
 export TF_CPP_MIN_LOG_LEVEL=3
 
@@ -11,6 +12,7 @@ PYTHONPATH=${BASE_PATH} python3 ${BASE_PATH}/tools/process_data_yahoo.py \
     --data-process-workers 32 \
     --max-prompt-length 256 \
     --dev-num 1000 \
+    --train-set-size ${TRAIN_SET_SIZE} \
     --class-index ${CLASS_INDEX} \
     --only-prompt \
     --model-type gpt2
@@ -23,5 +25,6 @@ PYTHONPATH=${BASE_PATH} python3 ${BASE_PATH}/tools/process_data_yahoo.py \
     --data-process-workers 32 \
     --max-prompt-length 256 \
     --dev-num 1000 \
+    --train-set-size ${TRAIN_SET_SIZE} \
     --class-index ${CLASS_INDEX} \
     --model-type gpt2

@@ -84,16 +84,28 @@ def main():
 
     if (args.class_index != 0):
         raw_data = [row for row in raw_data if row['class'] == str(args.class_index)]
+    for i in range(len(raw_data)):
+        for key in raw_data[i]:
+            if isinstance(raw_data[i][key], str):
+                raw_data[i][key] = raw_data[i][key].replace('\\n', '\n')
 
     if args.dev_num > 0:
         all_data = {
-            "valid": raw_data[:args.dev_num],
-            "train": raw_data[args.dev_num:]
+            "valid": raw_data[:int(args.dev_num * 1.1)],
+            "train": raw_data[int(args.dev_num * 1.1):]
+        }
+        data_len = {
+            "valid": args.dev_num,
+            "train": args.train_set_size if args.train_set_size > 0 else len(all_data["train"])
         }
     else:
         all_data = {
             "train": raw_data
         }
+        data_len = {
+            "train": args.train_set_size if args.train_set_size > 0 else len(all_data["train"])
+        }
+    data_len["train"] = min(data_len["train"], len(all_data["train"]))
 
     for split in all_data:
         # encoder use the tokenizer to encode data
@@ -122,6 +134,8 @@ def main():
         
         json_file = open(os.path.join(args.processed_data_dir, f"{split}.jsonl"), "w")
         
+        item_processed = 0
+
         for lid, (line, prompt_str, prompt, response, bytes_processed) in enumerate(encoded_docs):
             total_bytes_processed += bytes_processed
             if prompt is None:
@@ -134,6 +148,17 @@ def main():
                     continue
             else:
                 binary_builder.add_item(torch.IntTensor(prompt + [-1] + response))
+
+            if item_processed == data_len[split]:
+                if lid % 1000 == 0:
+                    current = time.time()
+                    elapsed = current - proc_start
+                    mbs = total_bytes_processed / elapsed / 1024 / 1024
+                    print(f"Processed {lid} documents. {inst_num} instances.",
+                        f"({lid/elapsed} docs/s, {mbs} MB/s).",
+                        file=sys.stderr)
+                continue
+            item_processed += 1
 
             json_file.write(json.dumps({
                 "instruction": line["question_title"],
