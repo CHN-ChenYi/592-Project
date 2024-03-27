@@ -18,7 +18,7 @@ CKPT_NAME="gpt2-large"
 CKPT="${BASE_PATH}/checkpoints/${CKPT_NAME}/"
 # CKPT="gpt2-large" # download automatically
 # data
-DATA_DIR="${BASE_PATH}/processed_data/dolly/full/gpt2/"
+DATA_DIR="${BASE_PATH}/processed_data/yahoo/full/gpt2/"
 # hp
 BATCH_SIZE=2
 LR=0.0001
@@ -77,7 +77,8 @@ OPTS+=" --do-sample"
 OPTS+=" --top-k 0"
 OPTS+=" --top-p 1.0"
 OPTS+=" --temperature 1.0"
-
+# PEFT 
+OPTS+=" --peft lora"
 
 export NCCL_DEBUG=""
 export WANDB_DISABLED=True

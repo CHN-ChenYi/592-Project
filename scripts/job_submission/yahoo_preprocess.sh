@@ -10,7 +10,7 @@
 #SBATCH --gpus-per-node=v100:1
 #SBATCH --partition=gpu
 #SBATCH --output=/home/%u/%x-%j.log
-#SBATCH --mem-per-cpu=5GB
+#SBATCH --mem-per-cpu=35GB
 #SBATCH --time=00-08:00:00
 
 BASE_PATH=/home/leeyongs/proj/592-Project

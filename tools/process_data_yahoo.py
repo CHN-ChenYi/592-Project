@@ -83,7 +83,7 @@ def main():
     classes.insert(0, "None")
 
     if (args.class_index != 0):
-        raw_data = [row for row in raw_data if row['class'] == str(args.class_index)]
+        raw_data = [row for row in raw_data if row['topic'] == str(args.class_index)]
     for i in range(len(raw_data)):
         for key in raw_data[i]:
             if isinstance(raw_data[i][key], str):
