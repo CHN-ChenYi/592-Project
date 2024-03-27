@@ -2,3 +2,5 @@ processed_data
 __pycache__
 checkpoints
 data
+results
+envs
