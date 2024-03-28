@@ -141,14 +141,6 @@ def main():
             if prompt is None:
                 continue
 
-            if args.only_prompt:
-                if len(prompt) < args.max_length:
-                    binary_builder.add_item(torch.IntTensor(prompt))
-                else:
-                    continue
-            else:
-                binary_builder.add_item(torch.IntTensor(prompt + [-1] + response))
-
             if item_processed == data_len[split]:
                 if lid % 1000 == 0:
                     current = time.time()
@@ -158,6 +150,15 @@ def main():
                         f"({lid/elapsed} docs/s, {mbs} MB/s).",
                         file=sys.stderr)
                 continue
+
+            if args.only_prompt:
+                if len(prompt) < args.max_length:
+                    binary_builder.add_item(torch.IntTensor(prompt))
+                else:
+                    continue
+            else:
+                binary_builder.add_item(torch.IntTensor(prompt + [-1] + response))
+
             item_processed += 1
 
             json_file.write(json.dumps({
