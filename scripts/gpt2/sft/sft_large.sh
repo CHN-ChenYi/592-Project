@@ -15,8 +15,8 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 # model
 BASE_PATH=${1-"/home/MiniLLM"}
 CKPT_NAME="gpt2-large"
-CKPT="${BASE_PATH}/checkpoints/${CKPT_NAME}/"
-# CKPT="gpt2-large" # download automatically
+# CKPT="${BASE_PATH}/checkpoints/${CKPT_NAME}/"
+CKPT="gpt2-large" # download automatically
 # data
 DATA_DIR="${BASE_PATH}/processed_data/yahoo/full/gpt2/"
 # hp
@@ -78,7 +78,7 @@ OPTS+=" --top-k 0"
 OPTS+=" --top-p 1.0"
 OPTS+=" --temperature 1.0"
 # PEFT 
-OPTS+=" --peft lora"
+# OPTS+=" --peft lora"
 
 export NCCL_DEBUG=""
 export WANDB_DISABLED=True
