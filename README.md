@@ -43,7 +43,7 @@ This script will replace the continuous `\n` in each document with a special tok
 Tokenize the data and store them in binary files:
 ```bash
 bash scripts/gpt2/tools/process_data_dolly.sh /PATH/TO/MiniLLM # Process Dolly Train / Validation Data
-bash scripts/gpt2/tools/process_data_yahoo.sh /PATH/TO/MiniLLM 0 0 # Process Yahoo Train / Validation Data
+bash scripts/gpt2/tools/process_data_yahoo.sh /PATH/TO/MiniLLM 0 0 0 # Process Yahoo Train / Validation Data (topic, train set length, test set length) (0 represents all of the remaining data)
 bash scripts/gpt2/tools/process_data_pretrain.sh /PATH/TO/MiniLLM # Process OpenWebText Train / Validation Data
 
 bash scripts/opt/tools/process_data_dolly.sh /PATH/TO/MiniLLM # Process Dolly Train / Validation Data

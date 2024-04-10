@@ -77,6 +77,7 @@ def add_data_args(parser: argparse.ArgumentParser):
     group.add_argument("--dev-num", type=int, default=-1)
     group.add_argument("--class-index", type=int, default=1)
     group.add_argument("--train-set-size", type=int, default=0)
+    group.add_argument("--test-set-size", type=int, default=0)
     group.add_argument("--dev-ratio", type=float, default=1)
     group.add_argument("--gen-num", type=int, default=-1)
     group.add_argument("--data-names", type=str, default=None)

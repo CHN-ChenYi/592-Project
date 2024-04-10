@@ -17,17 +17,20 @@ from utils import print_rank, save_rank, all_gather
 
 from rouge_metric import compute_metrics
 
+import time
+
 torch.set_num_threads(4)
 
 
 def prepare_dataset_main(args, tokenizer):
     data = {}
-    data["test"] = PromptDataset(args, tokenizer, "valid", args.data_dir, args.dev_num)
+    data["test"] = PromptDataset(args, tokenizer, "test" if args.data_names == "yahoo" else "valid", args.data_dir, args.dev_num)
 
     return data
 
 
 def run_model(args, tokenizer, model, dataset: PromptDataset, epoch, device):
+    start_time = time.time()
     
     collate_fn = dataset.collate
     
@@ -126,6 +129,9 @@ def run_model(args, tokenizer, model, dataset: PromptDataset, epoch, device):
     all_response_ids = all_response_ids.view(-1, all_response_ids.size(-1))
     all_response_ids = all_response_ids[:len(dataset)]
         
+    end_time = time.time()
+    print(f"Execution time of run_model: {end_time - start_time} seconds")
+
     return (
         mean_lm_loss,
         all_query_ids,

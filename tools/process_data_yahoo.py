@@ -56,7 +56,7 @@ class Encoder(object):
         full_tokens = Encoder.tokenizer.encode(prompt + response, add_special_tokens=False) + [Encoder.tokenizer.eos_token_id]
         response_tokens = full_tokens[len(prompt_tokens):]
         
-        if len(prompt_tokens) > self.args.max_prompt_length:
+        if len(prompt_tokens) > self.args.max_prompt_length or len(response) == 0:
             return None, None, None, None, len(line)
         
         return line, prompt, prompt_tokens, response_tokens, len(line)
@@ -105,7 +105,15 @@ def main():
         data_len = {
             "train": args.train_set_size if args.train_set_size > 0 else len(all_data["train"])
         }
-    data_len["train"] = min(data_len["train"], len(all_data["train"]))
+    if data_len["train"] * 1.1 < len(all_data["train"]):
+        all_data["test"] = all_data["train"][int(data_len["train"] * 1.1):]
+        all_data["train"] = all_data["train"][:int(data_len["train"] * 1.1)]
+        data_len["test"] = min(args.test_set_size, len(all_data["test"])) if args.test_set_size > 0 else len(all_data["test"])
+    else:
+        data_len["train"] = min(data_len["train"], len(all_data["train"]))
+
+    print(f"expected_data_len: {data_len}")
+    print(f"actual_data_len: { {key: len(value) for key, value in all_data.items()} }")
 
     for split in all_data:
         # encoder use the tokenizer to encode data
