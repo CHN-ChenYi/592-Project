@@ -30,8 +30,11 @@ def prepare_dataset_main(args, tokenizer):
 
 
 def run_model(args, tokenizer, model, dataset: PromptDataset, epoch, device):
-    start_time = time.time()
-    
+    entry_time = time.time()
+    zero_time = entry_time - entry_time
+    model_time = zero_time
+    generate_time = zero_time
+
     collate_fn = dataset.collate
     
     if args.model_parallel:
@@ -84,9 +87,15 @@ def run_model(args, tokenizer, model, dataset: PromptDataset, epoch, device):
             label_ids[:, :model_batch["input_ids"].size(1)-1] = -100  
             if args.model_type in ["gpt2"]:
                 position_ids = (torch.cumsum(attention_mask, dim=-1) - 1) * attention_mask
+                start_time = time.time()
                 out = model(input_ids=input_ids, position_ids=position_ids, attention_mask=attention_mask, return_dict=True)
+                end_time = time.time()
+                model_time = model_time + end_time - start_time
             else:
+                start_time = time.time()
                 out = model(input_ids=input_ids, attention_mask=attention_mask, return_dict=True)
+                end_time = time.time()
+                model_time = model_time + end_time - start_time
             logits = out.logits
             loss_mask = (label_ids != -100).float()
             if args.model_parallel:
@@ -100,11 +109,14 @@ def run_model(args, tokenizer, model, dataset: PromptDataset, epoch, device):
 
             query_ids = model_batch["input_ids"]
             max_new_tokens = args.max_length - query_ids.size(1)
+            start_time = time.time()
             gen_out = model.generate(
                 **model_batch,
                 generation_config=generation_config,
                 max_new_tokens=max_new_tokens
             )
+            end_time = time.time()
+            generate_time = generate_time + end_time - start_time
             full_ids = gen_out.sequences
             response_ids = full_ids[:, query_ids.size(1):] # remove prompt (may include start token)
             
@@ -129,8 +141,10 @@ def run_model(args, tokenizer, model, dataset: PromptDataset, epoch, device):
     all_response_ids = all_response_ids.view(-1, all_response_ids.size(-1))
     all_response_ids = all_response_ids[:len(dataset)]
         
-    end_time = time.time()
-    print(f"Execution time of run_model: {end_time - start_time} seconds")
+    exit_time = time.time()
+    print(f"Execution time of run_model: {exit_time - entry_time} seconds")
+    print(f"Execution time of model(): {model_time} seconds")
+    print(f"Execution time of generate(): {generate_time} seconds")
 
     return (
         mean_lm_loss,
